@@ -2,6 +2,9 @@
 
 namespace App\Services\NewsAggregator;
 
+use App\Models\Source;
+use App\Enums\NewsSource;
+
 /**
  * News Source Factory
  * Creates and returns different news source instances
@@ -13,12 +16,17 @@ class NewsSourceFactory
      */
     public static function getAllSources(): array
     {
-        return [
-            new NewsApiSource(),
-            new GuardianSource(),
-            new NytimesSource(),
-            // Add more sources here as needed
-        ];
+        $sourceInstances = [];
+        $activeSources = Source::active()->get();
+
+        foreach ($activeSources as $source) {
+            $instance = self::createSourceInstance($source->identifier);
+            if ($instance) {
+                $sourceInstances[] = $instance;
+            }
+        }
+
+        return $sourceInstances;
     }
 
     /**
@@ -26,10 +34,27 @@ class NewsSourceFactory
      */
     public static function getSource(string $identifier): ?NewsSourceInterface
     {
+        $source = Source::where('identifier', $identifier)->active()->first();
+        return $source ? self::createSourceInstance($identifier): null;
+    }
+
+    /**
+     * Get a source by enum
+     */
+    public static function getSourceByEnum(NewsSource $source): ?NewsSourceInterface
+    {
+        return self::getSource($source->value);
+    }
+
+    /**
+     * Create a source instance based on identifier
+     */
+    private static function createSourceInstance(string $identifier): ?NewsSourceInterface
+    {
         $sources = [
-            'newsapi' => NewsApiSource::class,
-            'guardian' => GuardianSource::class,
-            'nytimes' => NytimesSource::class,
+            NewsSource::NEWSAPI->value => NewsApiSource::class,
+            NewsSource::GUARDIAN->value => GuardianSource::class,
+            NewsSource::NYTIMES->value => NytimesSource::class,
             // Add more mappings here as needed
         ];
 

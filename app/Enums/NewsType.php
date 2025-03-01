@@ -2,6 +2,8 @@
 
 namespace App\Enums;
 
+use Illuminate\Support\Collection;
+
 enum NewsType: string
 {
     case TRENDING = 'trending';
@@ -27,5 +29,17 @@ enum NewsType: string
             self::TRENDING => 'The most popular news articles right now',
             self::YESTERDAY => 'News articles published yesterday',
         };
+    }
+
+     /**
+     * Get a list of all news types with their labels and descriptions
+     */
+    public static function types(): Collection
+    {
+        return collect(self::cases())->map(fn ($type) => (object) [
+            'id' => $type->value,
+            'name' => $type->label(),
+            'description' => $type->description(),
+        ]);
     }
 }

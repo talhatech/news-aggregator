@@ -12,24 +12,29 @@ return new class extends Migration
     public function up()
     {
         Schema::create('articles', function (Blueprint $table) {
-            $table->id();
-            $table->string('source');
-            $table->string('source_name');
+            $table->uuid('id')->primary();
+            $table->uuid('source_id')->nullable();
+            $table->uuid('platform_id')->nullable();
+            $table->uuid('category_id')->nullable();
+            $table->string('external_id')->nullable();
             $table->string('author')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
             $table->string('url')->unique();
             $table->text('image_url')->nullable();
+            $table->longText('content')->nullable();
             $table->timestamp('published_at')->nullable();
-            $table->text('content')->nullable();
-            $table->string('category')->nullable();
-            $table->string('external_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            // Foreign keys
+            $table->foreign('source_id')->references('id')->on('sources');
+            $table->foreign('platform_id')->references('id')->on('platforms');
+            $table->foreign('category_id')->references('id')->on('categories');
 
             // Indexes for faster searching
-            $table->index('source');
-            $table->index('category');
             $table->index('published_at');
+            $table->index(['title']);
         });
     }
 

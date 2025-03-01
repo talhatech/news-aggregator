@@ -2,7 +2,7 @@
 
 namespace App\Services\NewsAggregator;
 
-use App\Models\Article;
+use App\Repositories\ArticleRepository;
 use App\Enums\NewsType;
 
 /**
@@ -11,6 +11,13 @@ use App\Enums\NewsType;
  */
 class NewsService
 {
+    protected $articleRepository;
+
+    public function __construct(ArticleRepository $articleRepository)
+    {
+        $this->articleRepository = $articleRepository;
+    }
+
     /**
      * Fetch trending news from all sources
      */
@@ -64,10 +71,7 @@ class NewsService
     public function saveArticles(array $articles): void
     {
         foreach ($articles as $articleData) {
-            Article::updateOrCreate(
-                ['url' => $articleData['url']], // Unique constraint
-                $articleData
-            );
+            $this->articleRepository->saveArticle($articleData);
         }
     }
 

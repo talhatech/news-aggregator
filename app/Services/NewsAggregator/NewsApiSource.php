@@ -3,6 +3,8 @@
 namespace App\Services\NewsAggregator;
 
 use Carbon\Carbon;
+use App\Enums\NewsSource;
+use App\Http\Resources\News\NewsApiResource;
 
 /**
  * NewsAPI Source Implementation
@@ -13,7 +15,7 @@ class NewsApiSource extends AbstractNewsSource
 
     public function getSourceIdentifier(): string
     {
-        return 'newsapi';
+        return NewsSource::NEWSAPI->value;
     }
 
     public function fetchTrending(): array
@@ -50,24 +52,6 @@ class NewsApiSource extends AbstractNewsSource
         if (empty($apiResponse) || !isset($apiResponse['articles'])) {
             return [];
         }
-
-        $articles = [];
-        foreach ($apiResponse['articles'] as $item) {
-            $articles[] = [
-                'source' => $this->getSourceIdentifier(),
-                'source_name' => $item['source']['name'] ?? 'NewsAPI',
-                'author' => $item['author'] ?? null,
-                'title' => $item['title'] ?? '',
-                'description' => $item['description'] ?? '',
-                'url' => $item['url'] ?? '',
-                'image_url' => $item['urlToImage'] ?? null,
-                'published_at' => $item['publishedAt'] ?? null,
-                'content' => $item['content'] ?? '',
-                'category' => null, // Not provided by NewsAPI directly
-                'external_id' => md5($item['url']), // Generate a unique ID
-            ];
-        }
-
-        return $articles;
+        return NewsApiResource::collection($apiResponse['articles'])->toArray(request());
     }
 }

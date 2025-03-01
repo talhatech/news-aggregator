@@ -3,71 +3,74 @@
 namespace App\Repositories;
 
 use App\Models\Article;
-use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Category;
+use App\Models\Platform;
+use App\Models\Source;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ArticleRepository
 {
-    /**
-     * Get paginated articles with filters
-     */
-    public function getArticles(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    public function getArticles(array $filters = []): Builder
     {
-        $query = Article::query()->orderBy('published_at', 'desc');
-
-        // Apply filters
-        if (!empty($filters['search'])) {
-            $query->where(function ($q) use ($filters) {
-                $q->where('title', 'like', "%{$filters['search']}%")
-                   ->orWhere('description', 'like', "%{$filters['search']}%")
-                   ->orWhere('content', 'like', "%{$filters['search']}%");
-            });
-        }
-
-        if (!empty($filters['source'])) {
-            $query->where('source', $filters['source']);
-        }
-
-        if (!empty($filters['category'])) {
-            $query->where('category', $filters['category']);
-        }
-
-        if (!empty($filters['date_from'])) {
-            $query->where('published_at', '>=', $filters['date_from']);
-        }
-
-        if (!empty($filters['date_to'])) {
-            $query->where('published_at', '<=', $filters['date_to']);
-        }
-
-        return $query->paginate($perPage);
+        return Article::query()
+            ->search($filters['search'] ?? null)
+            ->fromSources($filters['sources'] ?? null)
+            ->fromCategories($filters['categories'] ?? null)
+            ->publishedBetween($filters['date_from'] ?? null, $filters['date_to'] ?? null)
+            ->orderBy('published_at', 'desc');
     }
 
-    /**
-     * Get available categories
-     */
-    public function getCategories(): array
+    public function getCategories(): Builder
     {
-        return Article::select('category')
-            ->whereNotNull('category')
-            ->distinct()
-            ->pluck('category')
-            ->toArray();
+        return Category::orderBy('name');
     }
 
-    /**
-     * Get available sources
-     */
-    public function getSources(): array
+    public function getSources(): Builder
     {
-        return Article::select('source', 'source_name')
-            ->distinct()
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->source,
-                    'name' => $item->source_name
-                ];
-            })
-            ->toArray();
+        return Source::orderBy('name');
+    }
+
+     /**
+     * Save an article and its related entities
+     */
+    public function saveArticle(array $articleData): Article
+    {
+        // Find or create the source
+        $source = Source::firstOrCreate(
+            ['identifier' => $articleData['source']],
+            ['name' => $articleData['platform']]
+        );
+
+        // Find or create the news platform if available
+        $platformId = null;
+        if (!empty($articleData['platform'])) {
+            $platform = Platform::firstOrCreate(['name' => $articleData['platform']]);
+            $platformId = $platform->getKey();
+        }
+
+        // Find or create the category if available
+        $categoryId = null;
+        if (!empty($articleData['category'])) {
+            $category = Category::firstOrCreate(['name' => $articleData['category']]);
+            $categoryId = $category->getKey();
+        }
+
+        // Create or update the article
+        return Article::updateOrCreate(
+            ['url' => $articleData['url']],
+            [
+                'source_id' => $source->getKey(),
+                'platform_id' => $platformId,
+                'category_id' => $categoryId,
+                'author' => $articleData['author'] ?? null,
+                'title' => $articleData['title'],
+                'description' => $articleData['description'] ?? null,
+                'image_url' => $articleData['image_url'] ?? null,
+                'published_at' => $articleData['published_at'] ?? now(),
+                'content' => $articleData['content'] ?? null,
+                'external_id' => $articleData['external_id'] ?? null,
+            ]
+        );
     }
 }

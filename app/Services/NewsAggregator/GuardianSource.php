@@ -3,6 +3,8 @@
 namespace App\Services\NewsAggregator;
 
 use Carbon\Carbon;
+use App\Enums\NewsSource;
+use App\Http\Resources\News\GuardianResource;
 
 /**
  * The Guardian Source Implementation
@@ -13,7 +15,7 @@ class GuardianSource extends AbstractNewsSource
 
     public function getSourceIdentifier(): string
     {
-        return 'guardian';
+        return NewsSource::GUARDIAN->value;
     }
 
     public function fetchTrending(): array
@@ -53,25 +55,6 @@ class GuardianSource extends AbstractNewsSource
             return [];
         }
 
-        $articles = [];
-        foreach ($apiResponse['response']['results'] as $item) {
-            $fields = $item['fields'] ?? [];
-
-            $articles[] = [
-                'source' => $this->getSourceIdentifier(),
-                'source_name' => 'The Guardian',
-                'author' => $fields['byline'] ?? null,
-                'title' => $fields['headline'] ?? $item['webTitle'] ?? '',
-                'description' => $fields['trailText'] ?? '',
-                'url' => $item['webUrl'] ?? '',
-                'image_url' => $fields['thumbnail'] ?? null,
-                'published_at' => $item['webPublicationDate'] ?? null,
-                'content' => $fields['bodyText'] ?? '',
-                'category' => $item['sectionName'] ?? null,
-                'external_id' => $item['id'] ?? md5($item['webUrl']),
-            ];
-        }
-
-        return $articles;
+        return GuardianResource::collection($apiResponse['response']['results'])->toArray(request());
     }
 }

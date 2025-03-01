@@ -3,6 +3,9 @@
 namespace App\Services\NewsAggregator;
 
 use Carbon\Carbon;
+use App\Enums\NewsSource;
+use App\Http\Resources\News\NytimesPopularResource;
+use App\Http\Resources\News\NytimesSearchResource;
 
 /**
  * New York Times Source Implementation
@@ -13,7 +16,7 @@ class NytimesSource extends AbstractNewsSource
 
     public function getSourceIdentifier(): string
     {
-        return 'nytimes';
+        return NewsSource::NYTIMES->value;
     }
 
     public function fetchTrending(): array
@@ -45,53 +48,13 @@ class NytimesSource extends AbstractNewsSource
 
     public function mapToArticleModel(array $apiResponse): array
     {
-        $articles = [];
-
-        // Handle most popular API response
         if (isset($apiResponse['results'])) {
-            foreach ($apiResponse['results'] as $item) {
-                $media = !empty($item['media'][0]['media-metadata'])
-                    ? $item['media'][0]['media-metadata'][2]['url'] ?? null
-                    : null;
-
-                $articles[] = [
-                    'source' => $this->getSourceIdentifier(),
-                    'source_name' => 'The New York Times',
-                    'author' => $item['byline'] ? preg_replace('/^By\s+/i', '', $item['byline']) : null,
-                    'title' => $item['title'] ?? '',
-                    'description' => $item['abstract'] ?? '',
-                    'url' => $item['url'] ?? '',
-                    'image_url' => $media,
-                    'published_at' => $item['published_date'] ?? null,
-                    'content' => $item['abstract'] ?? '',
-                    'category' => $item['section'] ?? null,
-                    'external_id' => $item['uri'] ?? md5($item['url']),
-                ];
-            }
+            return NytimesPopularResource::collection($apiResponse['results'])->toArray(request());
         }
-        // Handle article search API response
         elseif (isset($apiResponse['response']['docs'])) {
-            foreach ($apiResponse['response']['docs'] as $item) {
-                $multimedia = !empty($item['multimedia'])
-                    ? "https://static01.nyt.com/" . $item['multimedia'][0]['url']
-                    : null;
-
-                $articles[] = [
-                    'source' => $this->getSourceIdentifier(),
-                    'source_name' => 'The New York Times',
-                    'author' => $item['byline']['original'] ?? null,
-                    'title' => $item['headline']['main'] ?? '',
-                    'description' => $item['abstract'] ?? '',
-                    'url' => $item['web_url'] ?? '',
-                    'image_url' => $multimedia,
-                    'published_at' => $item['pub_date'] ?? null,
-                    'content' => $item['lead_paragraph'] ?? '',
-                    'category' => $item['section_name'] ?? null,
-                    'external_id' => $item['_id'] ?? md5($item['web_url']),
-                ];
-            }
+            return NytimesSearchResource::collection($apiResponse['response']['docs'])->toArray(request());
         }
 
-        return $articles;
+        return [];
     }
 }

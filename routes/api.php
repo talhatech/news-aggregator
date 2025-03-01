@@ -22,8 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // News Aggregator Routes
 Route::prefix('news')->group(function () {
     Route::get('/', [NewsController::class, 'index']);
-    Route::get('/trending', [NewsController::class, 'trending']);
-    Route::get('/yesterday', [NewsController::class, 'yesterday']);
     Route::get('/categories', [NewsController::class, 'categories']);
     Route::get('/sources', [NewsController::class, 'sources']);
 });

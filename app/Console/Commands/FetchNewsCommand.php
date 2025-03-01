@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Services\NewsAggregator\NewsService;
+use App\Enums\NewsType;
 
 class FetchNewsCommand extends Command
 {
@@ -18,13 +19,27 @@ class FetchNewsCommand extends Command
         $this->newsService = $newsService;
     }
 
-    public function handle()
+    public function handle():void
     {
-        $type = $this->argument('type');
-        $this->info("Fetching {$type} news...");
+        $typeStr = $this->argument('type');
+
+        $type = match($typeStr) {
+            'trending' => NewsType::TRENDING,
+            'yesterday' => NewsType::YESTERDAY,
+            default => null
+        };
+
+        if (!$type) {
+            $this->error("Invalid news type: {$typeStr}");
+            $this->info("Available types: trending, yesterday");
+            return;
+        }
+
+        $this->info("Fetching {$type->label()}...");
 
         $this->newsService->fetchAndSaveNews($type);
 
         $this->info('Done!');
+        return;
     }
 }

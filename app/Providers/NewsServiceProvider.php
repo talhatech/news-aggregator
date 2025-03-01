@@ -14,7 +14,9 @@ class NewsServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(NewsService::class, function ($app) {
-            return new NewsService();
+            return new NewsService(
+                $app->make(ArticleRepository::class)
+            );
         });
 
         $this->app->singleton(ArticleRepository::class, function ($app) {

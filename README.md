@@ -84,30 +84,6 @@ php artisan news:fetch trending
 php artisan news:fetch yesterday
 ```
 
-## API Endpoints
-
-- `GET /api/news` - Get articles with filters
-  - Query parameters: search, source, category, date_from, date_to, per_page
-  
-- `GET /api/news/trending` - Get trending news
-  - Query parameters: sources (optional array)
-  
-- `GET /api/news/yesterday` - Get yesterday's news
-  - Query parameters: sources (optional array)
-  
-- `GET /api/news/categories` - Get available categories
-
-- `GET /api/news/sources` - Get available sources
-
-## Adding a New News Source
-
-To add a new news source:
-
-1. Create a new class in `app/Services/NewsAggregator` that extends `AbstractNewsSource`
-2. Implement the required methods (fetchTrending, fetchYesterday, mapToArticleModel, getSourceIdentifier)
-3. Add the new source to the `NewsSourceFactory`
-4. Add the API key configuration to `config/news_sources.php`
-
 ## Architecture
 
 The application uses several design patterns to ensure flexibility and scalability:
@@ -119,6 +95,45 @@ The application uses several design patterns to ensure flexibility and scalabili
 - **Command Pattern**: For scheduled tasks
 
 This architecture makes it easy to add new sources without modifying existing code.
+
+## Adding a New News Source
+
+To add a new news source:
+
+1. Create a new class in `app/Services/NewsAggregator` that extends `AbstractNewsSource`
+2. Implement the required methods (fetchTrending, fetchYesterday, mapToArticleModel, getSourceIdentifier)
+3. Add the new source to the `NewsSourceFactory`
+4. Add the API key configuration to `config/news_sources.php`
+
+
+## API Endpoints
+
+| Endpoint | Description | Query Parameters |
+|----------|-------------|------------------|
+| `GET /api/news` | Get articles with filters | search, source, category, date_from, date_to, per_page |
+| `GET /api/news/categories` | Get available categories | None |
+| `GET /api/news/sources` | Get available sources | None |
+
+## API Documentation
+
+Interactive API documentation is available via Swagger UI at:
+
+```
+http://localhost:8000/api/documentation
+```
+
+The Swagger documentation provides:
+- Detailed parameter information
+- Response schemas
+- Interactive testing interface
+- Example requests and responses
+
+## Testing
+
+Run the tests with:
+
+
+See [TESTING.md](TESTING.md) for more information on the test suite.
 
 ## License
 
