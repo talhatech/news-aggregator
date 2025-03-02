@@ -31,31 +31,4 @@ class ArticleResource extends JsonResource
             'updated_at' => $this->updated_at,
         ];
     }
-
-    /**
-     * Create a new anonymous resource collection.
-     *
-     * @param  mixed  $resource
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public static function collection($resource)
-    {
-        $collection = parent::collection($resource);
-
-        // Add pagination metadata if available
-        if (method_exists($resource, 'currentPage')) {
-            $collection->additional([
-                'meta' => [
-                    'current_page' => $resource->currentPage(),
-                    'from' => $resource->firstItem(),
-                    'last_page' => $resource->lastPage(),
-                    'per_page' => $resource->perPage(),
-                    'to' => $resource->lastItem(),
-                    'total' => $resource->total(),
-                ]
-            ]);
-        }
-
-        return $collection;
-    }
 }

@@ -1,0 +1,37 @@
+graph TD
+    Client[Frontend Client] --> API[API Endpoints]
+
+    subgraph Laravel Backend
+        API --> Controller[NewsController]
+        Controller --> Repository[ArticleRepository]
+        Repository --> DB[(Database)]
+
+        Scheduler[Scheduler] --> Command[FetchNewsCommand]
+        Command --> NewsService[NewsService]
+        NewsService --> SourceFactory[NewsSourceFactory]
+
+        SourceFactory --> |Creates| Source1[NewsApiSource]
+        SourceFactory --> |Creates| Source2[GuardianSource]
+        SourceFactory --> |Creates| Source3[NytimesSource]
+        SourceFactory -.-> |Extensible| Source4[Future Sources]
+
+        Source1 --> |Implements| AbstractSource[AbstractNewsSource]
+        Source2 --> |Implements| AbstractSource
+        Source3 --> |Implements| AbstractSource
+        Source4 -.-> |Implements| AbstractSource
+
+        AbstractSource --> |Implements| Interface[NewsSourceInterface]
+    end
+
+    Source1 --> |Fetches| NewsAPI[NewsAPI.org]
+    Source2 --> |Fetches| Guardian[The Guardian API]
+    Source3 --> |Fetches| NYTimes[NYTimes API]
+    Source4 -.-> |Fetches| NewSource[New Source API]
+
+    style Laravel Backend fill:#f9f9f9,stroke:#333,stroke-width:1px
+    style AbstractSource fill:#d5e8d4,stroke:#82b366
+    style Interface fill:#d5e8d4,stroke:#82b366
+    style SourceFactory fill:#dae8fc,stroke:#6c8ebf
+    style NewsService fill:#dae8fc,stroke:#6c8ebf
+    style Source4 stroke-dasharray: 5 5
+    style NewSource stroke-dasharray: 5 5

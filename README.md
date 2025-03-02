@@ -7,14 +7,76 @@ This is a Laravel-based news aggregator backend that fetches articles from vario
 - Fetches news from multiple sources (NewsAPI, The Guardian, New York Times)
 - Standardizes article format across different sources
 - Provides RESTful API endpoints for article retrieval and filtering
-- Automatically updates news database through scheduled tasks
+- Automatically updates the news database through scheduled tasks
 - Implements scalable architecture for easy addition of new news sources
+
+## Directory Structure
+
+```
+news-aggregator/
+├── app/
+│   ├── Console/
+│   │   ├── Commands/
+│   │   │   ├── FetchNewsCommand.php
+│   │   │   ├── SeedSourcesCommand.php
+│   │   │   └── SourceAdminCommand.php
+│   │   └── Kernel.php
+│   ├── Enums/
+│   │   ├── NewsSource.php
+│   │   └── NewsType.php
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   └── Api/
+│   │   │       └── NewsController.php
+│   │   ├── Requests/
+│   │   │   └── ArticleFilterRequest.php
+│   │   └── Resources/
+│   │       └── News/
+│   │           ├── GuardianResource.php
+│   │           ├── NewsApiResource.php
+│   │           ├── NytimesPopularResource.php
+│   │           └── NytimesSearchResource.php
+│   ├── Models/
+│   │   ├── Article.php
+│   │   ├── Category.php
+│   │   ├── Platform.php
+│   │   └── Source.php
+│   ├── Providers/
+│   │   ├── AppServiceProvider.php
+│   │   └── NewsServiceProvider.php
+│   ├── Repositories/
+│   │   └── ArticleRepository.php
+│   └── Services/
+│       └── NewsAggregator/
+│           ├── AbstractNewsSource.php
+│           ├── GuardianSource.php
+│           ├── NewsApiSource.php
+│           ├── NewsService.php
+│           ├── NewsSourceFactory.php
+│           ├── NewsSourceInterface.php
+│           └── NytimesSource.php
+├── config/
+│   └── news_sources.php
+├── database/
+│   ├── migrations/
+│   │   ├── 2023_xx_xx_create_articles_table.php
+│   │   ├── 2023_xx_xx_create_categories_table.php
+│   │   ├── 2023_xx_xx_create_platforms_table.php
+│   │   └── 2023_xx_xx_create_sources_table.php
+│   └── seeders/
+│       └── DatabaseSeeder.php
+├── routes/
+│   └── api.php
+└── tests/
+    ├── Feature/
+    └── Unit/
+```
 
 ## Setup Instructions
 
 ### Prerequisites
 
-- PHP 8.0 or higher
+- PHP 8.2 or higher
 - Composer
 - MySQL or compatible database
 - Laravel requirements
@@ -22,49 +84,56 @@ This is a Laravel-based news aggregator backend that fetches articles from vario
 ### Installation
 
 1. Clone the repository:
-```bash
-git clone https://your-repository-url.git
-cd news-aggregator
-```
+
+   ```bash
+   git clone git@github.com:talhatech/news-aggregator.git
+   cd news-aggregator
+   ```
 
 2. Install dependencies:
-```bash
-composer install
-```
+
+   ```bash
+   composer install
+   ```
 
 3. Copy the environment file and configure your database:
-```bash
-cp .env.example .env
-```
+
+   ```bash
+   cp .env.example .env
+   ```
 
 4. Edit the `.env` file to set up your database connection and add your API keys:
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=news_aggregator
-DB_USERNAME=root
-DB_PASSWORD=
 
-NEWSAPI_KEY=your_newsapi_key_here
-GUARDIAN_API_KEY=your_guardian_api_key_here
-NYTIMES_API_KEY=your_nytimes_api_key_here
-```
+   ```
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=news_aggregator
+   DB_USERNAME=root
+   DB_PASSWORD=
+
+   NEWSAPI_KEY=your_newsapi_key_here
+   GUARDIAN_API_KEY=your_guardian_api_key_here
+   NYTIMES_API_KEY=your_nytimes_api_key_here
+   ```
 
 5. Generate the application key:
-```bash
-php artisan key:generate
-```
+
+   ```bash
+   php artisan key:generate
+   ```
 
 6. Run the migrations:
-```bash
-php artisan migrate
-```
+
+   ```bash
+   php artisan migrate --seed
+   ```
 
 7. Start the development server:
-```bash
-php artisan serve
-```
+
+   ```bash
+   php artisan serve
+   ```
 
 ### Schedule Setup
 
@@ -88,11 +157,11 @@ php artisan news:fetch yesterday
 
 The application uses several design patterns to ensure flexibility and scalability:
 
-- **Strategy Pattern**: Each news source implements a common interface
-- **Factory Pattern**: Creates news source instances
-- **Adapter Pattern**: Standardizes different API responses
-- **Repository Pattern**: For data access and filtering
-- **Command Pattern**: For scheduled tasks
+- **Strategy Pattern**: Each news source implements a common interface.
+- **Factory Pattern**: Creates news source instances.
+- **Adapter Pattern**: Standardizes different API responses.
+- **Repository Pattern**: For data access and filtering.
+- **Command Pattern**: For scheduled tasks.
 
 This architecture makes it easy to add new sources without modifying existing code.
 
@@ -100,11 +169,10 @@ This architecture makes it easy to add new sources without modifying existing co
 
 To add a new news source:
 
-1. Create a new class in `app/Services/NewsAggregator` that extends `AbstractNewsSource`
-2. Implement the required methods (fetchTrending, fetchYesterday, mapToArticleModel, getSourceIdentifier)
-3. Add the new source to the `NewsSourceFactory`
-4. Add the API key configuration to `config/news_sources.php`
-
+    1. Create a new class in `app/Services/NewsAggregator` that extends `AbstractNewsSource`.
+    2. Implement the required methods (`fetchTrending`, `fetchYesterday`, `mapToArticleModel`, `getSourceIdentifier`).
+    3. Add the new source to the `NewsSourceFactory`.
+    4. Add the API key configuration to `config/news_sources.php`.
 
 ## API Endpoints
 
@@ -132,9 +200,13 @@ The Swagger documentation provides:
 
 Run the tests with:
 
+```bash
+php artisan test
+```
 
 See [TESTING.md](TESTING.md) for more information on the test suite.
 
 ## License
 
 [MIT License](LICENSE.md)
+
