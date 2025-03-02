@@ -10,70 +10,12 @@ This is a Laravel-based news aggregator backend that fetches articles from vario
 - Automatically updates the news database through scheduled tasks
 - Implements scalable architecture for easy addition of new news sources
 
-## Directory Structure
-
-```
-news-aggregator/
-├── app/
-│   ├── Console/
-│   │   ├── Commands/
-│   │   │   ├── FetchNewsCommand.php
-│   │   │   ├── SeedSourcesCommand.php
-│   │   │   └── SourceAdminCommand.php
-│   │   └── Kernel.php
-│   ├── Enums/
-│   │   ├── NewsSource.php
-│   │   └── NewsType.php
-│   ├── Http/
-│   │   ├── Controllers/
-│   │   │   └── Api/
-│   │   │       └── NewsController.php
-│   │   ├── Requests/
-│   │   │   └── ArticleFilterRequest.php
-│   │   └── Resources/
-│   │       └── News/
-│   │           ├── GuardianResource.php
-│   │           ├── NewsApiResource.php
-│   │           ├── NytimesPopularResource.php
-│   │           └── NytimesSearchResource.php
-│   ├── Models/
-│   │   ├── Article.php
-│   │   ├── Category.php
-│   │   ├── Platform.php
-│   │   └── Source.php
-│   ├── Providers/
-│   │   ├── AppServiceProvider.php
-│   │   └── NewsServiceProvider.php
-│   ├── Repositories/
-│   │   └── ArticleRepository.php
-│   └── Services/
-│       └── NewsAggregator/
-│           ├── AbstractNewsSource.php
-│           ├── GuardianSource.php
-│           ├── NewsApiSource.php
-│           ├── NewsService.php
-│           ├── NewsSourceFactory.php
-│           ├── NewsSourceInterface.php
-│           └── NytimesSource.php
-├── config/
-│   └── news_sources.php
-├── database/
-│   ├── migrations/
-│   │   ├── 2023_xx_xx_create_articles_table.php
-│   │   ├── 2023_xx_xx_create_categories_table.php
-│   │   ├── 2023_xx_xx_create_platforms_table.php
-│   │   └── 2023_xx_xx_create_sources_table.php
-│   └── seeders/
-│       └── DatabaseSeeder.php
-├── routes/
-│   └── api.php
-└── tests/
-    ├── Feature/
-    └── Unit/
-```
+## Diagrams
+- See [Schema Diagram](schema-diagram.mermaid) for database structure.
+- See [Architecture Diagram](architecture-diagram.mermaid) for system design.
+- See [Directory Structure Diagram](directory-structure.mermaid) for codebase organization.
 
 ## Setup Instructions
-
 ### Prerequisites
 
 - PHP 8.2 or higher
@@ -205,8 +147,3 @@ php artisan test
 ```
 
 See [TESTING.md](TESTING.md) for more information on the test suite.
-
-## License
-
-[MIT License](LICENSE.md)
-

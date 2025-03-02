@@ -7,39 +7,39 @@ erDiagram
         timestamp created_at
         timestamp updated_at
     }
-    
+
     NEWS_PLATFORMS {
         uuid id PK
         string name
         timestamp created_at
         timestamp updated_at
     }
-    
+
     CATEGORIES {
         uuid id PK
         string name
         timestamp created_at
         timestamp updated_at
     }
-    
+
     ARTICLES {
         uuid id PK
         uuid source_id FK
         uuid news_platform_id FK
         uuid category_id FK
+        string external_id
         string author
         string title
         text description
         string url
         text image_url
-        timestamp published_at
         longtext content
-        string external_id
+        timestamp published_at
         timestamp created_at
         timestamp updated_at
         timestamp deleted_at
     }
-    
+
     SOURCES ||--o{ ARTICLES : "has many"
     NEWS_PLATFORMS ||--o{ ARTICLES : "has many"
     CATEGORIES ||--o{ ARTICLES : "has many"

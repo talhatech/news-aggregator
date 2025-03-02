@@ -1,0 +1,55 @@
+flowchart TD;
+    A[news-aggregator] -->|Has| B[app]
+    B --> B1[Console] --> B11[Commands]
+    B11 --> B111[FetchNewsCommand.php]
+    B11 --> B112[SourceAdminCommand.php]
+
+    B --> B2[Enums]
+    B2 --> B21[NewsSource.php]
+    B2 --> B22[NewsType.php]
+
+    B --> B3[Http]
+    B3 --> B31[Controllers] --> B311[Api] --> B3111[NewsController.php]
+    B3 --> B32[Requests] --> B321[ArticleFilterRequest.php]
+    B3 --> B33[Resources]
+    B33 --> B331[API] --> B3311[ArticleResource.php]
+    B33 --> B332[News]
+    B332 --> B3321[GuardianResource.php]
+    B332 --> B3322[NewsApiResource.php]
+    B332 --> B3323[NytimesPopularResource.php]
+    B332 --> B3324[NytimesSearchResource.php]
+
+    B --> B4[Models]
+    B4 --> B41[Article.php]
+    B4 --> B42[Category.php]
+    B4 --> B43[Platform.php]
+    B4 --> B44[Source.php]
+
+    B --> B5[Providers]
+    B5 --> B51[AppServiceProvider.php]
+    B5 --> B52[NewsServiceProvider.php]
+
+    B --> B6[Repositories] --> B61[ArticleRepository.php]
+
+    B --> B7[Services]
+    B7 --> B71[NewsAggregator]
+    B71 --> B711[AbstractNewsSource.php]
+    B71 --> B712[GuardianSource.php]
+    B71 --> B713[NewsApiSource.php]
+    B71 --> B714[NewsService.php]
+    B71 --> B715[NewsSourceFactory.php]
+    B71 --> B716[NewsSourceInterface.php]
+    B71 --> B717[NytimesSource.php]
+
+    A --> C[config] --> C1[news_sources.php]
+    A --> D[database]
+    D --> D1[migrations]
+    D1 --> D11[2023_xx_xx_create_articles_table.php]
+    D1 --> D12[2023_xx_xx_create_categories_table.php]
+    D1 --> D13[2023_xx_xx_create_platforms_table.php]
+    D1 --> D14[2023_xx_xx_create_sources_table.php]
+
+    D --> D2[seeders] --> D21[DatabaseSeeder.php]
+
+    A --> E[routes] --> E1[api.php]
+    A --> F[tests] --> F1[Feature] --> F11[NewsApiTest.php]
