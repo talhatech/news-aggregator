@@ -33,7 +33,6 @@ class NewsController extends Controller
     {
         $this->articleRepository = $articleRepository;
     }
-
     /**
      * Get articles with filters
      *
@@ -46,37 +45,48 @@ class NewsController extends Controller
      *     @OA\Parameter(
      *         name="search",
      *         in="query",
-     *         description="Search term to filter articles",
+     *         description="Search term to filter articles (max: 100 characters)",
      *         required=false,
-     *         @OA\Schema(type="string", example="Technology")
+     *         @OA\Schema(type="string", maxLength=100, example="Technology")
      *     ),
      *     @OA\Parameter(
-     *         name="source",
+     *         name="source_ids[]",
      *         in="query",
-     *         description="Filter articles by source",
+     *         description="Filter articles by source IDs (UUID format)",
      *         required=false,
-     *         @OA\Schema(type="string", example="BBC News")
+     *         style="form",
+     *         explode=true,
+     *         @OA\Schema(
+     *             type="array",
+     *             @OA\Items(type="string", format="uuid"),
+     *         )
      *     ),
      *     @OA\Parameter(
-     *         name="category",
+     *         name="category_ids[]",
      *         in="query",
-     *         description="Filter articles by category",
+     *         description="Filter articles by category IDs (UUID format)",
      *         required=false,
-     *         @OA\Schema(type="string", example="Politics")
+     *         style="form",
+     *         explode=true,
+     *         @OA\Schema(
+     *             type="array",
+     *             @OA\Items(type="string", format="uuid"),
+     *         )
      *     ),
+
      *     @OA\Parameter(
      *         name="date_from",
      *         in="query",
-     *         description="Filter articles published after this date (format: YYYY-MM-DD)",
+     *         description="Filter articles published after this date (format: YYYY-MM-DD HH:mm:ss)",
      *         required=false,
-     *         @OA\Schema(type="string", format="date", example="2024-01-01")
+     *         @OA\Schema(type="string", format="date-time", example="2017-11-21 20:59:01")
      *     ),
      *     @OA\Parameter(
      *         name="date_to",
      *         in="query",
-     *         description="Filter articles published before this date (format: YYYY-MM-DD)",
+     *         description="Filter articles published before this date (format: YYYY-MM-DD HH:mm:ss, must be after or equal to date_from)",
      *         required=false,
-     *         @OA\Schema(type="string", format="date", example="2024-12-31")
+     *         @OA\Schema(type="string", format="date-time", example="2025-03-09 23:59:59")
      *     ),
      *     @OA\Parameter(
      *         name="page",
@@ -102,17 +112,17 @@ class NewsController extends Controller
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="id", type="string", example="022a7a2b-2c92-4fef-92c1-efc1e9b21fb5"),
      *                     @OA\Property(
      *                         property="source",
      *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=2),
+     *                         @OA\Property(property="id", type="string", example="9e563059-80d9-40ae-8107-4c07cea47458"),
      *                         @OA\Property(property="name", type="string", example="CNN")
      *                     ),
      *                     @OA\Property(
      *                         property="platform",
      *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=3),
+     *                         @OA\Property(property="id", type="string", example="9e56305a-23f5-445b-bba1-34d6a893d8fc"),
      *                         @OA\Property(property="name", type="string", example="Web")
      *                     ),
      *                     @OA\Property(property="author", type="string", nullable=true, example="John Doe"),
@@ -125,7 +135,7 @@ class NewsController extends Controller
      *                         property="category",
      *                         type="object",
      *                         nullable=true,
-     *                         @OA\Property(property="id", type="integer", example=5),
+     *                         @OA\Property(property="id", type="string", example="9e56305a-4d17-4830-a940-249876eb42fb"),
      *                         @OA\Property(property="name", type="string", example="Technology")
      *                     )
      *                 )
@@ -174,7 +184,7 @@ class NewsController extends Controller
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="id", type="string", example="022a7a2b-2c92-4fef-92c1-efc1e9b21fb5"),
      *                     @OA\Property(property="name", type="string", example="Politics")
      *                 )
      *             )
@@ -207,7 +217,7 @@ class NewsController extends Controller
      *                 type="array",
      *                 @OA\Items(
      *                     type="object",
-     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="id", type="string", example="022a7a2b-2c92-4fef-92c1-efc1e9b21fb6"),
      *                     @OA\Property(property="name", type="string", example="BBC News")
      *                 )
      *             )

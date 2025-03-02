@@ -14,9 +14,10 @@ class ArticleRepository
     public function getArticles(array $filters = []): Builder
     {
         return Article::query()
+            ->with(['source', 'platform', 'category'])
             ->search($filters['search'] ?? null)
-            ->fromSources($filters['sources'] ?? null)
-            ->fromCategories($filters['categories'] ?? null)
+            ->fromSources($filters['source_ids'] ?? null)
+            ->fromCategories($filters['category_ids'] ?? null)
             ->publishedBetween($filters['date_from'] ?? null, $filters['date_to'] ?? null)
             ->orderBy('published_at', 'desc');
     }

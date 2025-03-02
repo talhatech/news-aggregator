@@ -26,53 +26,64 @@
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Search term to filter articles",
+                        "description": "Search term to filter articles (max: 100 characters)",
                         "required": false,
                         "schema": {
                             "type": "string",
+                            "maxLength": 100,
                             "example": "Technology"
                         }
                     },
                     {
-                        "name": "source",
+                        "name": "source_ids[]",
                         "in": "query",
-                        "description": "Filter articles by source",
+                        "description": "Filter articles by source IDs (UUID format)",
                         "required": false,
+                        "style": "form",
+                        "explode": true,
                         "schema": {
-                            "type": "string",
-                            "example": "BBC News"
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "format": "uuid"
+                            }
                         }
                     },
                     {
-                        "name": "category",
+                        "name": "category_ids[]",
                         "in": "query",
-                        "description": "Filter articles by category",
+                        "description": "Filter articles by category IDs (UUID format)",
                         "required": false,
+                        "style": "form",
+                        "explode": true,
                         "schema": {
-                            "type": "string",
-                            "example": "Politics"
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "format": "uuid"
+                            }
                         }
                     },
                     {
                         "name": "date_from",
                         "in": "query",
-                        "description": "Filter articles published after this date (format: YYYY-MM-DD)",
+                        "description": "Filter articles published after this date (format: YYYY-MM-DD HH:mm:ss)",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "format": "date",
-                            "example": "2024-01-01"
+                            "format": "date-time",
+                            "example": "2017-11-21 20:59:01"
                         }
                     },
                     {
                         "name": "date_to",
                         "in": "query",
-                        "description": "Filter articles published before this date (format: YYYY-MM-DD)",
+                        "description": "Filter articles published before this date (format: YYYY-MM-DD HH:mm:ss, must be after or equal to date_from)",
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "format": "date",
-                            "example": "2024-12-31"
+                            "format": "date-time",
+                            "example": "2025-03-09 23:59:59"
                         }
                     },
                     {
@@ -108,14 +119,14 @@
                                             "items": {
                                                 "properties": {
                                                     "id": {
-                                                        "type": "integer",
-                                                        "example": 1
+                                                        "type": "string",
+                                                        "example": "022a7a2b-2c92-4fef-92c1-efc1e9b21fb5"
                                                     },
                                                     "source": {
                                                         "properties": {
                                                             "id": {
-                                                                "type": "integer",
-                                                                "example": 2
+                                                                "type": "string",
+                                                                "example": "9e563059-80d9-40ae-8107-4c07cea47458"
                                                             },
                                                             "name": {
                                                                 "type": "string",
@@ -127,8 +138,8 @@
                                                     "platform": {
                                                         "properties": {
                                                             "id": {
-                                                                "type": "integer",
-                                                                "example": 3
+                                                                "type": "string",
+                                                                "example": "9e56305a-23f5-445b-bba1-34d6a893d8fc"
                                                             },
                                                             "name": {
                                                                 "type": "string",
@@ -168,8 +179,8 @@
                                                     "category": {
                                                         "properties": {
                                                             "id": {
-                                                                "type": "integer",
-                                                                "example": 5
+                                                                "type": "string",
+                                                                "example": "9e56305a-4d17-4830-a940-249876eb42fb"
                                                             },
                                                             "name": {
                                                                 "type": "string",
@@ -244,8 +255,8 @@
                                             "items": {
                                                 "properties": {
                                                     "id": {
-                                                        "type": "integer",
-                                                        "example": 1
+                                                        "type": "string",
+                                                        "example": "022a7a2b-2c92-4fef-92c1-efc1e9b21fb5"
                                                     },
                                                     "name": {
                                                         "type": "string",
@@ -284,8 +295,8 @@
                                             "items": {
                                                 "properties": {
                                                     "id": {
-                                                        "type": "integer",
-                                                        "example": 1
+                                                        "type": "string",
+                                                        "example": "022a7a2b-2c92-4fef-92c1-efc1e9b21fb6"
                                                     },
                                                     "name": {
                                                         "type": "string",

@@ -15,10 +15,10 @@ class ArticleFilterRequest extends FormRequest
     {
         return [
             'search'        => ['sometimes', 'string', 'max:100'],
-            'sources'       => ['sometimes', 'array'],
-            'sources.*'     => ['string', 'max:30'],
-            'categories'    => ['sometimes', 'array'],
-            'categories.*'  => ['string', 'max:30'],
+            'source_ids'    => ['sometimes', 'array'],
+            'source_ids.*'  => ['string', 'uuid'],
+            'category_ids'  => ['sometimes', 'array'],
+            'category_ids.*'=> ['string', 'uuid'],
             'date_from'     => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
             'date_to'       => ['sometimes', 'date', 'date_format:Y-m-d H:i:s', 'after_or_equal:date_from'],
         ];

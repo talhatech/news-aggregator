@@ -23,6 +23,8 @@ class Article extends BaseModel
 
     protected $casts = [
         'published_at' => 'datetime',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
@@ -63,17 +65,17 @@ class Article extends BaseModel
     }
 
 
-    public function scopeFromSources(Builder $query, ?array $sources): Builder
+    public function scopeFromSources(Builder $query, ?array $source_ids): Builder
     {
-        return $query->when($sources, function ($query) use ($sources) {
-            $query->whereHas('source', fn($subQ) => $subQ->whereIn('identifier', $sources));
+        return $query->when($source_ids, function ($query) use ($source_ids) {
+            $query->whereHas('source', fn($subQ) => $subQ->whereIn('id', $source_ids));
         });
     }
 
-    public function scopeFromCategories(Builder $query, ?array $categories): Builder
+    public function scopeFromCategories(Builder $query, ?array $category_ids): Builder
     {
-        return $query->when($categories, function ($query) use ($categories) {
-            $query->whereHas('category', fn($subQ) => $subQ->whereIn('name', $categories));
+        return $query->when($category_ids, function ($query) use ($category_ids) {
+            $query->whereHas('category', fn($subQ) => $subQ->whereIn('id', $category_ids));
         });
     }
 
